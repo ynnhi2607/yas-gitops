@@ -1,0 +1,4 @@
+ui:
+  image:
+    repository: ynnhi2607/yas-backoffice
+    tag: v1.0.0

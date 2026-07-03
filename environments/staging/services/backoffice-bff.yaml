@@ -1,0 +1,7 @@
+backend:
+  image:
+    repository: ynnhi2607/yas-backoffice-bff
+    tag: v1.0.0
+  ingress:
+    enabled: true
+    host: backoffice-staging.yas.local.com

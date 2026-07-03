@@ -1,0 +1,4 @@
+backend:
+  image:
+    repository: ynnhi2607/yas-inventory
+    tag: main

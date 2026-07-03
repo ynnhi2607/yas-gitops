@@ -1,0 +1,23 @@
+backend:
+  image:
+    repository: ghcr.io/nashtech-garage/yas-media
+    tag: latest
+
+  nameOverride: media
+  fullnameOverride: media
+  hostAliases:
+    - ip: 10.107.223.248
+      hostnames:
+        - identity.yas.local.com
+  databaseName: media
+  ingress:
+    enabled: false
+  extraVolumes:
+    - name: media-application
+      configMap:
+        name: media-application-configmap
+  extraVolumeMounts:
+    - name: media-application
+      mountPath: /opt/yas/media
+  extraApplicationConfigPaths:
+    - /opt/yas/media/media-application.yaml

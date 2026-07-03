@@ -1,0 +1,7 @@
+backend:
+  image:
+    repository: ynnhi2607/yas-backoffice-bff
+    tag: main
+  ingress:
+    enabled: true
+    host: backoffice-dev.yas.local.com

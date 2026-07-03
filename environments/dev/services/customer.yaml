@@ -1,0 +1,4 @@
+backend:
+  image:
+    repository: ynnhi2607/yas-customer
+    tag: main

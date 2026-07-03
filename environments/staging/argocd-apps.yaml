@@ -1,0 +1,63 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: yas-staging-services
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - service: yas-configuration
+            wave: "0"
+          - service: product
+            wave: "1"
+          - service: cart
+            wave: "1"
+          - service: order
+            wave: "1"
+          - service: customer
+            wave: "1"
+          - service: inventory
+            wave: "1"
+          - service: tax
+            wave: "1"
+          - service: media
+            wave: "1"
+          - service: search
+            wave: "1"
+          - service: storefront-bff
+            wave: "2"
+          - service: backoffice-bff
+            wave: "2"
+          - service: storefront-ui
+            wave: "2"
+          - service: backoffice-ui
+            wave: "2"
+          - service: swagger-ui
+            wave: "3"
+  template:
+    metadata:
+      name: yas-staging-{{service}}
+      labels:
+        app.kubernetes.io/part-of: yas-staging
+      annotations:
+        argocd.argoproj.io/sync-wave: '{{wave}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/ynnhi2607/yas-gitops.git
+        targetRevision: main
+        path: charts/{{service}}
+        helm:
+          ignoreMissingValueFiles: true
+          valueFiles:
+            - ../../environments/staging/services/{{service}}.yaml
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: yas-staging
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
