@@ -1,4 +1,4 @@
 ui:
   image:
-    repository: ynnhi2607/yas-backoffice
-    tag: v1.0.0
+    repository: ghcr.io/nashtech-garage/yas-backoffice
+    tag: latest

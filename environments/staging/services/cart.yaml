@@ -1,4 +1,4 @@
 backend:
   image:
-    repository: ynnhi2607/yas-cart
-    tag: v1.0.0
+    repository: ghcr.io/nashtech-garage/yas-cart
+    tag: latest

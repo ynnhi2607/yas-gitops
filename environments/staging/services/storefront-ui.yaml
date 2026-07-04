@@ -1,4 +1,4 @@
 ui:
   image:
-    repository: ynnhi2607/yas-storefront
-    tag: v1.0.0
+    repository: ghcr.io/nashtech-garage/yas-storefront
+    tag: latest
