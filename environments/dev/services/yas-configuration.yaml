@@ -2,4 +2,4 @@
 # Keep environment-specific configuration here when needed.
 mediaApplicationConfig:
   yas:
-    publicUrl: http://api-dev.yas.local.com:31788/media
+    publicUrl: http://api-dev.yas.local.com/media
