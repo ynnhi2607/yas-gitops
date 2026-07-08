@@ -5,5 +5,8 @@ hosts:
   backoffice: backoffice-dev.yas.local.com
   api: api-dev.yas.local.com
 
+identity:
+  enabled: true
+
 services:
   swaggerService: yas-dev-swagger-ui

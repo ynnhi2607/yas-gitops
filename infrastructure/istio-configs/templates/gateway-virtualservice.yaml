@@ -17,6 +17,7 @@ spec:
         - {{ .Values.hosts.storefront }}
         - {{ .Values.hosts.backoffice }}
         - {{ .Values.hosts.api }}
+        - {{ .Values.identity.host }}
 ---
 apiVersion: networking.istio.io/v1
 kind: VirtualService
@@ -125,6 +126,31 @@ spec:
             port:
               number: 80
       timeout: {{ .Values.timeouts.default }}
+{{ if .Values.identity.enabled }}
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: identity-web
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  hosts:
+    - {{ .Values.identity.host }}
+  gateways:
+    - yas-gateway
+  http:
+    - match:
+        - authority:
+            exact: {{ .Values.identity.host }}
+      route:
+        - destination:
+            host: {{ .Values.identity.serviceHost }}
+            port:
+              number: {{ .Values.identity.servicePort }}
+      timeout: {{ .Values.timeouts.default }}
+{{ end }}
 ---
 apiVersion: networking.istio.io/v1
 kind: VirtualService

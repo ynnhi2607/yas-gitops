@@ -5,6 +5,12 @@ hosts:
   backoffice: backoffice-dev.yas.local.com
   api: api-dev.yas.local.com
 
+identity:
+  enabled: false
+  host: identity.yas.local.com
+  serviceHost: keycloak-service.keycloak.svc.cluster.local
+  servicePort: 80
+
 mtls:
   mode: STRICT
 
