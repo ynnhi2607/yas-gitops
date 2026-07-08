@@ -173,6 +173,8 @@ spec:
             regex: '{{ $apiAuthority }}'
           uri:
             prefix: /media
+      rewrite:
+        uri: /
       route:
         - destination:
             host: media.{{ .Values.namespace }}.svc.cluster.local
