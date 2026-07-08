@@ -1,0 +1,210 @@
+apiVersion: networking.istio.io/v1
+kind: Gateway
+metadata:
+  name: yas-gateway
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - {{ .Values.hosts.storefront }}
+        - {{ .Values.hosts.backoffice }}
+        - {{ .Values.hosts.api }}
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: yas-web
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  hosts:
+    - {{ .Values.hosts.storefront }}
+    - {{ .Values.hosts.backoffice }}
+    - {{ .Values.hosts.api }}
+  gateways:
+    - yas-gateway
+  http:
+    - match:
+        - authority:
+            regex: '^{{ .Values.hosts.storefront }}(:[0-9]+)?$'
+          uri:
+            prefix: /api
+        - authority:
+            regex: '^{{ .Values.hosts.storefront }}(:[0-9]+)?$'
+          uri:
+            prefix: /oauth2
+        - authority:
+            regex: '^{{ .Values.hosts.storefront }}(:[0-9]+)?$'
+          uri:
+            prefix: /login
+        - authority:
+            regex: '^{{ .Values.hosts.storefront }}(:[0-9]+)?$'
+          uri:
+            prefix: /logout
+      route:
+        - destination:
+            host: storefront-bff.{{ .Values.namespace }}.svc.cluster.local
+            port:
+              number: 80
+      timeout: {{ .Values.timeouts.default }}
+      retries:
+        attempts: {{ .Values.retry.attempts }}
+        perTryTimeout: {{ .Values.timeouts.retryPerTry }}
+        retryOn: 5xx,reset,connect-failure
+    - match:
+        - authority:
+            regex: '^{{ .Values.hosts.storefront }}(:[0-9]+)?$'
+      route:
+        - destination:
+            host: storefront-ui.{{ .Values.namespace }}.svc.cluster.local
+            port:
+              number: 3000
+      timeout: {{ .Values.timeouts.default }}
+    - match:
+        - authority:
+            regex: '^{{ .Values.hosts.backoffice }}(:[0-9]+)?$'
+          uri:
+            prefix: /api
+        - authority:
+            regex: '^{{ .Values.hosts.backoffice }}(:[0-9]+)?$'
+          uri:
+            prefix: /oauth2
+        - authority:
+            regex: '^{{ .Values.hosts.backoffice }}(:[0-9]+)?$'
+          uri:
+            prefix: /login
+        - authority:
+            regex: '^{{ .Values.hosts.backoffice }}(:[0-9]+)?$'
+          uri:
+            prefix: /logout
+      route:
+        - destination:
+            host: backoffice-bff.{{ .Values.namespace }}.svc.cluster.local
+            port:
+              number: 80
+      timeout: {{ .Values.timeouts.default }}
+      retries:
+        attempts: {{ .Values.retry.attempts }}
+        perTryTimeout: {{ .Values.timeouts.retryPerTry }}
+        retryOn: 5xx,reset,connect-failure
+    - match:
+        - authority:
+            regex: '^{{ .Values.hosts.backoffice }}(:[0-9]+)?$'
+      route:
+        - destination:
+            host: backoffice-ui.{{ .Values.namespace }}.svc.cluster.local
+            port:
+              number: 3000
+      timeout: {{ .Values.timeouts.default }}
+    - match:
+        - authority:
+            regex: '^{{ .Values.hosts.api }}(:[0-9]+)?$'
+          uri:
+            prefix: /swagger-ui
+      route:
+        - destination:
+            host: {{ .Values.services.swaggerService }}.{{ .Values.namespace }}.svc.cluster.local
+            port:
+              number: 8080
+      timeout: {{ .Values.timeouts.default }}
+    - match:
+        - authority:
+            regex: '^{{ .Values.hosts.api }}(:[0-9]+)?$'
+      route:
+        - destination:
+            host: storefront-bff.{{ .Values.namespace }}.svc.cluster.local
+            port:
+              number: 80
+      timeout: {{ .Values.timeouts.default }}
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: tax-retry
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  hosts:
+    - tax
+    - tax.{{ .Values.namespace }}.svc.cluster.local
+  http:
+    - route:
+        - destination:
+            host: tax.{{ .Values.namespace }}.svc.cluster.local
+            port:
+              number: 80
+      timeout: {{ .Values.timeouts.default }}
+      retries:
+        attempts: {{ .Values.retry.attempts }}
+        perTryTimeout: {{ .Values.timeouts.retryPerTry }}
+        retryOn: 5xx,retriable-4xx,connect-failure,reset
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: product-retry
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  hosts:
+    - product
+    - product.{{ .Values.namespace }}.svc.cluster.local
+  http:
+    - route:
+        - destination:
+            host: product.{{ .Values.namespace }}.svc.cluster.local
+            port:
+              number: 80
+      timeout: {{ .Values.timeouts.default }}
+      retries:
+        attempts: {{ .Values.retry.attempts }}
+        perTryTimeout: {{ .Values.timeouts.retryPerTry }}
+        retryOn: 5xx,connect-failure,reset
+---
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: elasticsearch-header-fix
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  hosts:
+    - elasticsearch-es-http.elasticsearch.svc.cluster.local
+    - elasticsearch-es-http.elasticsearch
+  http:
+    - match:
+        - method:
+            regex: '^(HEAD|GET)$'
+      route:
+        - destination:
+            host: elasticsearch-es-http.elasticsearch.svc.cluster.local
+            port:
+              number: 9200
+      headers:
+        request:
+          set:
+            Accept: application/json
+          remove:
+            - Content-Type
+    - route:
+        - destination:
+            host: elasticsearch-es-http.elasticsearch.svc.cluster.local
+            port:
+              number: 9200
+      headers:
+        request:
+          set:
+            Accept: application/json
+            Content-Type: application/json

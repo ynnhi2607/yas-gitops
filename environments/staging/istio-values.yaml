@@ -1,0 +1,9 @@
+namespace: yas-staging
+
+hosts:
+  storefront: storefront-staging.yas.local.com
+  backoffice: backoffice-staging.yas.local.com
+  api: api-staging.yas.local.com
+
+services:
+  swaggerService: yas-staging-swagger-ui

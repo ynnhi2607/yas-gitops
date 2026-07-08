@@ -1,0 +1,38 @@
+namespace: yas-dev
+
+hosts:
+  storefront: storefront-dev.yas.local.com
+  backoffice: backoffice-dev.yas.local.com
+  api: api-dev.yas.local.com
+
+mtls:
+  mode: STRICT
+
+services:
+  backends:
+    - backoffice-bff
+    - storefront-bff
+    - cart
+    - customer
+    - inventory
+    - media
+    - order
+    - product
+    - search
+    - tax
+  public:
+    - storefront-ui
+    - backoffice-ui
+    - storefront-bff
+    - backoffice-bff
+    - swagger-ui
+    - yas-dev-swagger-ui
+    - yas-staging-swagger-ui
+  swaggerService: yas-dev-swagger-ui
+
+timeouts:
+  default: 30s
+  retryPerTry: 5s
+
+retry:
+  attempts: 3

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: istio-configs
+description: Istio service mesh policies for YAS applications
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

@@ -1,0 +1,225 @@
+{{- range .Values.services.public }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-public-{{ . }}
+  namespace: {{ $.Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ . }}
+  rules:
+    - {}
+---
+{{- end }}
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-health-checks
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  action: ALLOW
+  rules:
+    - to:
+        - operation:
+            paths:
+              - /
+              - /health
+              - /actuator/health
+              - /actuator/health/*
+              - /actuator/prometheus
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-to-product
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: product
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/{{ .Values.namespace }}/sa/storefront-bff
+              - cluster.local/ns/{{ .Values.namespace }}/sa/backoffice-bff
+              - cluster.local/ns/{{ .Values.namespace }}/sa/cart
+              - cluster.local/ns/{{ .Values.namespace }}/sa/order
+              - cluster.local/ns/{{ .Values.namespace }}/sa/search
+              - cluster.local/ns/{{ .Values.namespace }}/sa/inventory
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-to-cart
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cart
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/{{ .Values.namespace }}/sa/storefront-bff
+              - cluster.local/ns/{{ .Values.namespace }}/sa/order
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-to-customer
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: customer
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/{{ .Values.namespace }}/sa/storefront-bff
+              - cluster.local/ns/{{ .Values.namespace }}/sa/backoffice-bff
+              - cluster.local/ns/{{ .Values.namespace }}/sa/order
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-to-order
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: order
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/{{ .Values.namespace }}/sa/storefront-bff
+              - cluster.local/ns/{{ .Values.namespace }}/sa/backoffice-bff
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-to-tax
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: tax
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/{{ .Values.namespace }}/sa/order
+              - cluster.local/ns/{{ .Values.namespace }}/sa/storefront-bff
+              - cluster.local/ns/{{ .Values.namespace }}/sa/backoffice-bff
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-to-search
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: search
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/{{ .Values.namespace }}/sa/storefront-bff
+              - cluster.local/ns/{{ .Values.namespace }}/sa/backoffice-bff
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-to-inventory
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: inventory
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/{{ .Values.namespace }}/sa/storefront-bff
+              - cluster.local/ns/{{ .Values.namespace }}/sa/backoffice-bff
+              - cluster.local/ns/{{ .Values.namespace }}/sa/order
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-to-media
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: media
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/{{ .Values.namespace }}/sa/storefront-bff
+              - cluster.local/ns/{{ .Values.namespace }}/sa/backoffice-bff
+              - cluster.local/ns/{{ .Values.namespace }}/sa/product
+              - cluster.local/ns/{{ .Values.namespace }}/sa/cart
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-to-sampledata
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: sampledata
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/{{ .Values.namespace }}/sa/storefront-bff
+              - cluster.local/ns/{{ .Values.namespace }}/sa/backoffice-bff
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: deny-all-by-default
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  action: ALLOW

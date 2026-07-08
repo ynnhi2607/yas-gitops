@@ -1,0 +1,65 @@
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: default-istio-mutual
+  namespace: {{ .Values.namespace }}
+spec:
+  host: "*.{{ .Values.namespace }}.svc.cluster.local"
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+---
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: keycloak-no-tls
+  namespace: {{ .Values.namespace }}
+spec:
+  host: keycloak-service.keycloak.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: DISABLE
+---
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: postgres-no-tls
+  namespace: {{ .Values.namespace }}
+spec:
+  host: "*.postgres.svc.cluster.local"
+  trafficPolicy:
+    tls:
+      mode: DISABLE
+---
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: redis-no-tls
+  namespace: {{ .Values.namespace }}
+spec:
+  host: "*.redis.svc.cluster.local"
+  trafficPolicy:
+    tls:
+      mode: DISABLE
+---
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: kafka-no-tls
+  namespace: {{ .Values.namespace }}
+spec:
+  host: "*.kafka.svc.cluster.local"
+  trafficPolicy:
+    tls:
+      mode: DISABLE
+---
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: elasticsearch-no-tls
+  namespace: {{ .Values.namespace }}
+spec:
+  host: "*.elasticsearch.svc.cluster.local"
+  trafficPolicy:
+    tls:
+      mode: DISABLE

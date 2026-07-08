@@ -1,0 +1,27 @@
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: {{ .Values.namespace }}
+spec:
+  mtls:
+    mode: {{ .Values.mtls.mode }}
+{{- range .Values.services.backends }}
+---
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: {{ . }}-metrics
+  namespace: {{ $.Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ . }}
+  mtls:
+    mode: {{ $.Values.mtls.mode }}
+  portLevelMtls:
+    8090:
+      mode: DISABLE
+{{- end }}

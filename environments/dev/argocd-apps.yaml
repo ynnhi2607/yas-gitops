@@ -55,9 +55,52 @@ spec:
       destination:
         server: https://kubernetes.default.svc
         namespace: yas-dev
+      ignoreDifferences:
+        - group: apps
+          kind: Deployment
+          jqPathExpressions:
+            - '.spec.template.spec.containers[]? | select(.name == "istio-proxy")'
+            - '.spec.template.spec.initContainers[]? | select(.name == "istio-init")'
+            - '.spec.template.spec.volumes[]? | select(.name | startswith("istio-"))'
+            - '.spec.template.metadata.annotations."istio.io/rev"'
+            - '.spec.template.metadata.annotations."sidecar.istio.io/status"'
+            - '.spec.template.metadata.annotations."kubectl.kubernetes.io/default-container"'
+            - '.spec.template.metadata.annotations."kubectl.kubernetes.io/default-logs-container"'
       syncPolicy:
         automated:
           prune: true
           selfHeal: true
+        managedNamespaceMetadata:
+          labels:
+            istio-injection: enabled
         syncOptions:
           - CreateNamespace=true
+          - RespectIgnoreDifferences=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: yas-dev-istio-configs
+  namespace: argocd
+  labels:
+    app.kubernetes.io/part-of: yas-dev
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/ynnhi2607/yas-gitops.git
+    targetRevision: main
+    path: infrastructure/istio-configs
+    helm:
+      valueFiles:
+        - ../../environments/dev/istio-values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: yas-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
