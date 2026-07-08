@@ -187,6 +187,13 @@ spec:
     matchLabels:
       app.kubernetes.io/name: media
   rules:
+    - to:
+        - operation:
+            methods:
+              - GET
+              - HEAD
+            paths:
+              - /media/medias/*/file/*
     - from:
         - source:
             principals:
@@ -194,7 +201,6 @@ spec:
               - cluster.local/ns/{{ .Values.namespace }}/sa/backoffice-bff
               - cluster.local/ns/{{ .Values.namespace }}/sa/product
               - cluster.local/ns/{{ .Values.namespace }}/sa/cart
-              - cluster.local/ns/istio-system/sa/istio-ingressgateway
 ---
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
