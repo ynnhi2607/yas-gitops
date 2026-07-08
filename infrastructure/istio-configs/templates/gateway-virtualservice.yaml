@@ -38,6 +38,25 @@ spec:
         - authority:
             regex: '^{{ .Values.hosts.storefront }}(:[0-9]+)?$'
           uri:
+            prefix: /_next
+        - authority:
+            regex: '^{{ .Values.hosts.storefront }}(:[0-9]+)?$'
+          uri:
+            prefix: /favicon.ico
+        - authority:
+            regex: '^{{ .Values.hosts.storefront }}(:[0-9]+)?$'
+          uri:
+            prefix: /images
+      route:
+        - destination:
+            host: storefront-ui.{{ .Values.namespace }}.svc.cluster.local
+            port:
+              number: 3000
+      timeout: {{ .Values.timeouts.default }}
+    - match:
+        - authority:
+            regex: '^{{ .Values.hosts.storefront }}(:[0-9]+)?$'
+          uri:
             prefix: /api
         - authority:
             regex: '^{{ .Values.hosts.storefront }}(:[0-9]+)?$'
@@ -67,6 +86,25 @@ spec:
       route:
         - destination:
             host: storefront-ui.{{ .Values.namespace }}.svc.cluster.local
+            port:
+              number: 3000
+      timeout: {{ .Values.timeouts.default }}
+    - match:
+        - authority:
+            regex: '^{{ .Values.hosts.backoffice }}(:[0-9]+)?$'
+          uri:
+            prefix: /_next
+        - authority:
+            regex: '^{{ .Values.hosts.backoffice }}(:[0-9]+)?$'
+          uri:
+            prefix: /favicon.ico
+        - authority:
+            regex: '^{{ .Values.hosts.backoffice }}(:[0-9]+)?$'
+          uri:
+            prefix: /images
+      route:
+        - destination:
+            host: backoffice-ui.{{ .Values.namespace }}.svc.cluster.local
             port:
               number: 3000
       timeout: {{ .Values.timeouts.default }}
