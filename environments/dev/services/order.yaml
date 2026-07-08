@@ -1,4 +1,4 @@
 backend:
   image:
-    repository: ynnhi2607/yas-order
-    tag: ad537f59
+    repository: ghcr.io/nashtech-garage/yas-order
+    tag: latest
