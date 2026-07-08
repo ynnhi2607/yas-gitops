@@ -91,3 +91,24 @@ backend:
     repository: ynnhi2607/yas-tax
     tag: ddaa8b60
 ```
+
+## Deploy Observability Addons
+
+Prometheus/Grafana/Tempo/OpenTelemetry are installed on the cluster from the `yas` repo Helm scripts.
+This GitOps repo manages the lightweight observability addons used for the demo:
+
+- Loki for log storage.
+- Promtail for pod log collection.
+- Grafana datasource ConfigMap for Prometheus, Loki, and Tempo.
+
+```bash
+./scripts/apply-apps.sh observability
+kubectl get applications -n argocd | grep observability
+kubectl get pods -n observability
+```
+
+Open Grafana with the cluster ingress/port-forward and use:
+
+- `Prometheus` for metrics.
+- `Loki` for logs.
+- `Tempo` for traces and service graph.

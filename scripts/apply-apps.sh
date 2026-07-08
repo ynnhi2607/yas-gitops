@@ -3,11 +3,11 @@ set -euo pipefail
 
 ENVIRONMENT="${1:-dev}"
 case "$ENVIRONMENT" in
-  dev|staging)
+  dev|staging|observability)
     kubectl apply -f "environments/${ENVIRONMENT}/argocd-apps.yaml"
     ;;
   *)
-    echo "Usage: $0 [dev|staging]" >&2
+    echo "Usage: $0 [dev|staging|observability]" >&2
     exit 1
     ;;
 esac
