@@ -4,6 +4,9 @@ hosts:
   storefront: storefront-dev.yas.local.com
   backoffice: backoffice-dev.yas.local.com
   api: api-dev.yas.local.com
+  storefrontAliases: []
+  backofficeAliases: []
+  apiAliases: []
 
 identity:
   enabled: false

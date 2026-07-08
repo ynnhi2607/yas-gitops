@@ -1,3 +1,9 @@
+{{- $storefrontHosts := prepend (.Values.hosts.storefrontAliases | default list) .Values.hosts.storefront -}}
+{{- $backofficeHosts := prepend (.Values.hosts.backofficeAliases | default list) .Values.hosts.backoffice -}}
+{{- $apiHosts := prepend (.Values.hosts.apiAliases | default list) .Values.hosts.api -}}
+{{- $storefrontAuthority := printf "^(%s)(:[0-9]+)?$" (join "|" $storefrontHosts) -}}
+{{- $backofficeAuthority := printf "^(%s)(:[0-9]+)?$" (join "|" $backofficeHosts) -}}
+{{- $apiAuthority := printf "^(%s)(:[0-9]+)?$" (join "|" $apiHosts) -}}
 apiVersion: networking.istio.io/v1
 kind: Gateway
 metadata:
@@ -15,8 +21,17 @@ spec:
         protocol: HTTP
       hosts:
         - {{ .Values.hosts.storefront }}
+{{- range .Values.hosts.storefrontAliases }}
+        - {{ . }}
+{{- end }}
         - {{ .Values.hosts.backoffice }}
+{{- range .Values.hosts.backofficeAliases }}
+        - {{ . }}
+{{- end }}
         - {{ .Values.hosts.api }}
+{{- range .Values.hosts.apiAliases }}
+        - {{ . }}
+{{- end }}
         - {{ .Values.identity.host }}
 ---
 apiVersion: networking.istio.io/v1
@@ -31,20 +46,29 @@ spec:
     - {{ .Values.hosts.storefront }}
     - {{ .Values.hosts.backoffice }}
     - {{ .Values.hosts.api }}
+{{- range .Values.hosts.storefrontAliases }}
+    - {{ . }}
+{{- end }}
+{{- range .Values.hosts.backofficeAliases }}
+    - {{ . }}
+{{- end }}
+{{- range .Values.hosts.apiAliases }}
+    - {{ . }}
+{{- end }}
   gateways:
     - yas-gateway
   http:
     - match:
         - authority:
-            regex: '^{{ .Values.hosts.storefront }}(:[0-9]+)?$'
+            regex: '{{ $storefrontAuthority }}'
           uri:
             prefix: /_next
         - authority:
-            regex: '^{{ .Values.hosts.storefront }}(:[0-9]+)?$'
+            regex: '{{ $storefrontAuthority }}'
           uri:
             prefix: /favicon.ico
         - authority:
-            regex: '^{{ .Values.hosts.storefront }}(:[0-9]+)?$'
+            regex: '{{ $storefrontAuthority }}'
           uri:
             prefix: /images
       route:
@@ -55,19 +79,19 @@ spec:
       timeout: {{ .Values.timeouts.default }}
     - match:
         - authority:
-            regex: '^{{ .Values.hosts.storefront }}(:[0-9]+)?$'
+            regex: '{{ $storefrontAuthority }}'
           uri:
             prefix: /api
         - authority:
-            regex: '^{{ .Values.hosts.storefront }}(:[0-9]+)?$'
+            regex: '{{ $storefrontAuthority }}'
           uri:
             prefix: /oauth2
         - authority:
-            regex: '^{{ .Values.hosts.storefront }}(:[0-9]+)?$'
+            regex: '{{ $storefrontAuthority }}'
           uri:
             prefix: /login
         - authority:
-            regex: '^{{ .Values.hosts.storefront }}(:[0-9]+)?$'
+            regex: '{{ $storefrontAuthority }}'
           uri:
             prefix: /logout
       route:
@@ -82,7 +106,7 @@ spec:
         retryOn: 5xx,reset,connect-failure
     - match:
         - authority:
-            regex: '^{{ .Values.hosts.storefront }}(:[0-9]+)?$'
+            regex: '{{ $storefrontAuthority }}'
       route:
         - destination:
             host: storefront-ui.{{ .Values.namespace }}.svc.cluster.local
@@ -91,15 +115,15 @@ spec:
       timeout: {{ .Values.timeouts.default }}
     - match:
         - authority:
-            regex: '^{{ .Values.hosts.backoffice }}(:[0-9]+)?$'
+            regex: '{{ $backofficeAuthority }}'
           uri:
             prefix: /_next
         - authority:
-            regex: '^{{ .Values.hosts.backoffice }}(:[0-9]+)?$'
+            regex: '{{ $backofficeAuthority }}'
           uri:
             prefix: /favicon.ico
         - authority:
-            regex: '^{{ .Values.hosts.backoffice }}(:[0-9]+)?$'
+            regex: '{{ $backofficeAuthority }}'
           uri:
             prefix: /images
       route:
@@ -110,19 +134,19 @@ spec:
       timeout: {{ .Values.timeouts.default }}
     - match:
         - authority:
-            regex: '^{{ .Values.hosts.backoffice }}(:[0-9]+)?$'
+            regex: '{{ $backofficeAuthority }}'
           uri:
             prefix: /api
         - authority:
-            regex: '^{{ .Values.hosts.backoffice }}(:[0-9]+)?$'
+            regex: '{{ $backofficeAuthority }}'
           uri:
             prefix: /oauth2
         - authority:
-            regex: '^{{ .Values.hosts.backoffice }}(:[0-9]+)?$'
+            regex: '{{ $backofficeAuthority }}'
           uri:
             prefix: /login
         - authority:
-            regex: '^{{ .Values.hosts.backoffice }}(:[0-9]+)?$'
+            regex: '{{ $backofficeAuthority }}'
           uri:
             prefix: /logout
       route:
@@ -137,7 +161,7 @@ spec:
         retryOn: 5xx,reset,connect-failure
     - match:
         - authority:
-            regex: '^{{ .Values.hosts.backoffice }}(:[0-9]+)?$'
+            regex: '{{ $backofficeAuthority }}'
       route:
         - destination:
             host: backoffice-ui.{{ .Values.namespace }}.svc.cluster.local
@@ -146,7 +170,18 @@ spec:
       timeout: {{ .Values.timeouts.default }}
     - match:
         - authority:
-            regex: '^{{ .Values.hosts.api }}(:[0-9]+)?$'
+            regex: '{{ $apiAuthority }}'
+          uri:
+            prefix: /media
+      route:
+        - destination:
+            host: media.{{ .Values.namespace }}.svc.cluster.local
+            port:
+              number: 80
+      timeout: {{ .Values.timeouts.default }}
+    - match:
+        - authority:
+            regex: '{{ $apiAuthority }}'
           uri:
             prefix: /swagger-ui
       route:
@@ -157,7 +192,7 @@ spec:
       timeout: {{ .Values.timeouts.default }}
     - match:
         - authority:
-            regex: '^{{ .Values.hosts.api }}(:[0-9]+)?$'
+            regex: '{{ $apiAuthority }}'
       route:
         - destination:
             host: storefront-bff.{{ .Values.namespace }}.svc.cluster.local
