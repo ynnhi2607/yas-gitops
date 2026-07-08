@@ -94,6 +94,10 @@ spec:
             regex: '{{ $storefrontAuthority }}'
           uri:
             prefix: /logout
+        - authority:
+            regex: '{{ $storefrontAuthority }}'
+          uri:
+            prefix: /authentication
       route:
         - destination:
             host: storefront-bff.{{ .Values.namespace }}.svc.cluster.local
@@ -149,6 +153,10 @@ spec:
             regex: '{{ $backofficeAuthority }}'
           uri:
             prefix: /logout
+        - authority:
+            regex: '{{ $backofficeAuthority }}'
+          uri:
+            prefix: /authentication
       route:
         - destination:
             host: backoffice-bff.{{ .Values.namespace }}.svc.cluster.local
