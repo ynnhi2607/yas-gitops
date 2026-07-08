@@ -192,8 +192,6 @@ spec:
             methods:
               - GET
               - HEAD
-            paths:
-              - /media/medias/*/file/*
     - from:
         - source:
             principals:
