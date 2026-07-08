@@ -1,7 +1,8 @@
 backend:
   image:
-    repository: ghcr.io/nashtech-garage/yas-media
+    repository: ynnhi2607/yas-media
     tag: latest
+    pullPolicy: Always
 
   nameOverride: media
   fullnameOverride: media
@@ -28,22 +29,21 @@ backend:
     - /opt/yas/media/media-application.yaml
   extraInitContainers:
     - name: seed-sample-images
-      image: ynnhi2607/yas-sampledata:latest
+      image: ynnhi2607/yas-media:latest
       command:
         - sh
         - -c
         - |
           set -eu
-          if [ ! -f /images/.sample-images-seeded ]; then
-            echo "Copying sample images..."
-            cp -a /sample-images/. /images/
-            touch /images/.sample-images-seeded
+          if [ -d /images ] && [ ! -f /images-mount/sample/product/ip15/iphone15_thumbnail.jpg ]; then
+            echo "Copying baseline media images..."
+            cp -a /images/. /images-mount/
           else
-            echo "Sample images already seeded."
+            echo "Baseline images already exist or /images is missing."
           fi
       volumeMounts:
         - name: media-images
-          mountPath: /images
+          mountPath: /images-mount
   extraObjects:
     - apiVersion: v1
       kind: PersistentVolumeClaim
