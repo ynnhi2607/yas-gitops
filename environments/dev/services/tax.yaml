@@ -1,4 +1,4 @@
 backend:
   image:
-    repository: ynnhi2607/yas-tax
-    tag: 58ab0f0a
+    repository: ghcr.io/nashtech-garage/yas-tax
+    tag: latest
