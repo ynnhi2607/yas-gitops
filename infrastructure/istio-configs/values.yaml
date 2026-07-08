@@ -17,6 +17,11 @@ identity:
 mtls:
   mode: STRICT
 
+gateway:
+  principals:
+    - cluster.local/ns/istio-system/sa/istio-ingressgateway
+    - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
+
 services:
   backends:
     - backoffice-bff

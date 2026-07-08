@@ -12,7 +12,12 @@ spec:
     matchLabels:
       app.kubernetes.io/name: {{ . }}
   rules:
-    - {}
+    - from:
+        - source:
+            principals:
+{{- range $.Values.gateway.principals }}
+              - {{ . }}
+{{- end }}
 ---
 {{- end }}
 apiVersion: security.istio.io/v1
@@ -187,7 +192,13 @@ spec:
     matchLabels:
       app.kubernetes.io/name: media
   rules:
-    - to:
+    - from:
+        - source:
+            principals:
+{{- range .Values.gateway.principals }}
+              - {{ . }}
+{{- end }}
+      to:
         - operation:
             methods:
               - GET
