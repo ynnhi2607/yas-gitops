@@ -1,4 +1,4 @@
 backend:
   image:
     repository: ynnhi2607/yas-order
-    tag: aaae9156
+    tag: ad537f59
