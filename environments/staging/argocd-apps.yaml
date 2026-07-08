@@ -25,6 +25,8 @@ spec:
             wave: "1"
           - service: search
             wave: "1"
+          - service: sampledata
+            wave: "2"
           - service: storefront-bff
             wave: "2"
           - service: backoffice-bff

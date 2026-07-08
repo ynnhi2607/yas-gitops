@@ -1,7 +1,8 @@
 backend:
   image:
-    repository: ghcr.io/nashtech-garage/yas-sampledata
+    repository: ynnhi2607/yas-sampledata
     tag: latest
+    pullPolicy: Always
 
   nameOverride: sampledata
   fullnameOverride: sampledata
@@ -17,3 +18,49 @@ backend:
       mountPath: /opt/yas/sampledata
   extraApplicationConfigPaths:
     - /opt/yas/sampledata/sampledata-application.yaml
+  extraObjects:
+    - apiVersion: batch/v1
+      kind: Job
+      metadata:
+        name: sampledata-seed
+        annotations:
+          argocd.argoproj.io/hook: PostSync
+          argocd.argoproj.io/hook-delete-policy: BeforeHookCreation,HookSucceeded
+          argocd.argoproj.io/sync-wave: "5"
+      spec:
+        backoffLimit: 4
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/name: sampledata-seed
+          spec:
+            restartPolicy: OnFailure
+            serviceAccountName: sampledata
+            containers:
+              - name: seed
+                image: curlimages/curl:8.10.1
+                imagePullPolicy: IfNotPresent
+                command:
+                  - sh
+                  - -c
+                  - |
+                    set -eu
+                    url="http://sampledata/sampledata/storefront/sampledata"
+                    for i in $(seq 1 60); do
+                      echo "Seeding sample data attempt ${i}..."
+                      http_code=$(curl -sS -o /tmp/sampledata-response.txt -w "%{http_code}" \
+                        -X POST \
+                        -H "Content-Type: application/json" \
+                        -d '{"message":"seed"}' \
+                        "${url}" || true)
+                      cat /tmp/sampledata-response.txt || true
+                      echo
+                      if [ "${http_code}" = "200" ] || [ "${http_code}" = "201" ]; then
+                        echo "Sample data seeded."
+                        exit 0
+                      fi
+                      echo "Sample data endpoint returned HTTP ${http_code}; retrying..."
+                      sleep 10
+                    done
+                    echo "Sample data seed failed after retries."
+                    exit 1

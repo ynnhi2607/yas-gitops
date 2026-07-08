@@ -1,4 +1,5 @@
 backend:
   image:
-    repository: ghcr.io/nashtech-garage/yas-sampledata
+    repository: ynnhi2607/yas-sampledata
     tag: latest
+    pullPolicy: Always

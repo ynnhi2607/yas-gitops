@@ -213,6 +213,7 @@ spec:
             principals:
               - cluster.local/ns/{{ .Values.namespace }}/sa/storefront-bff
               - cluster.local/ns/{{ .Values.namespace }}/sa/backoffice-bff
+              - cluster.local/ns/{{ .Values.namespace }}/sa/sampledata
 ---
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
