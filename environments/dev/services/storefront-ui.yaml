@@ -1,5 +1,5 @@
 ui:
   image:
-    repository: ynnhi2607/yas-storefront
+    repository: ghcr.io/nashtech-garage/yas-storefront
     tag: latest
     pullPolicy: Always
