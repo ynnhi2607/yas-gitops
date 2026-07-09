@@ -47,6 +47,8 @@ metadata:
   namespace: observability
   labels:
     app: tempo
+    app.kubernetes.io/name: tempo
+    app.kubernetes.io/instance: tempo
 spec:
   replicas: 1
   selector:
@@ -56,6 +58,8 @@ spec:
     metadata:
       labels:
         app: tempo
+        app.kubernetes.io/name: tempo
+        app.kubernetes.io/instance: tempo
     spec:
       containers:
         - name: tempo
@@ -102,9 +106,13 @@ metadata:
   namespace: observability
   labels:
     app: tempo
+    app.kubernetes.io/name: tempo
+    app.kubernetes.io/instance: tempo
 spec:
   selector:
     app: tempo
+    app.kubernetes.io/name: tempo
+    app.kubernetes.io/instance: tempo
   ports:
     - name: http
       port: 3100
