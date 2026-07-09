@@ -116,7 +116,7 @@ spec:
             - /bin/sh
             - -c
           args:
-            - ulimit -n 1048576 && exec /usr/bin/promtail -config.file=/etc/promtail/promtail.yaml
+            - ulimit -n 1048576 || true; exec /usr/bin/promtail -config.file=/etc/promtail/promtail.yaml
           ports:
             - name: http-metrics
               containerPort: 3101
