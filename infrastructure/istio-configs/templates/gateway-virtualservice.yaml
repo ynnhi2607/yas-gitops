@@ -191,17 +191,6 @@ spec:
         - authority:
             regex: '{{ $apiAuthority }}'
           uri:
-            prefix: /payment-paypal
-      route:
-        - destination:
-            host: payment-paypal.{{ .Values.namespace }}.svc.cluster.local
-            port:
-              number: 80
-      timeout: {{ .Values.timeouts.default }}
-    - match:
-        - authority:
-            regex: '{{ $apiAuthority }}'
-          uri:
             prefix: /payment
       route:
         - destination:

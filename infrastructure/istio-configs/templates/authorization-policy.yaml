@@ -55,8 +55,6 @@ spec:
               - /media/v3/api-docs/*
               - /payment/v3/api-docs
               - /payment/v3/api-docs/*
-              - /payment-paypal/v3/api-docs
-              - /payment-paypal/v3/api-docs/*
               - /tax/v3/api-docs
               - /tax/v3/api-docs/*
               - /search/v3/api-docs
@@ -306,25 +304,6 @@ spec:
               - cluster.local/ns/{{ .Values.namespace }}/sa/storefront-bff
               - cluster.local/ns/{{ .Values.namespace }}/sa/backoffice-bff
               - cluster.local/ns/{{ .Values.namespace }}/sa/order
----
-apiVersion: security.istio.io/v1
-kind: AuthorizationPolicy
-metadata:
-  name: allow-to-payment-paypal
-  namespace: {{ .Values.namespace }}
-  labels:
-    app.kubernetes.io/part-of: yas-service-mesh
-spec:
-  action: ALLOW
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: payment-paypal
-  rules:
-    - from:
-        - source:
-            principals:
-              - cluster.local/ns/{{ .Values.namespace }}/sa/payment
----
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:

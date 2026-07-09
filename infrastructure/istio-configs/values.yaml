@@ -33,7 +33,6 @@ services:
     - media
     - order
     - payment
-    - payment-paypal
     - product
     - search
     - tax
