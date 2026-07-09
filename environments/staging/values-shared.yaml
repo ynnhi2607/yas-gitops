@@ -1,3 +1,9 @@
 environment: staging
 namespace: yas-staging
 domain: yas.staging.local.com
+
+backend:
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: /actuator/prometheus
+    prometheus.io/port: "8090"

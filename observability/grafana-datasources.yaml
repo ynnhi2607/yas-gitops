@@ -9,11 +9,11 @@ data:
   datasources.yaml: |
     apiVersion: 1
     datasources:
-      - name: Prometheus
+      - name: prometheus
         uid: prometheus
         type: prometheus
         access: proxy
-        url: http://prometheus-kube-prometheus-prometheus.observability.svc.cluster.local:9090
+        url: http://prometheus.istio-system.svc.cluster.local:9090
         isDefault: true
         editable: true
       - name: Loki
