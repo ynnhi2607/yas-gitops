@@ -62,37 +62,45 @@ data:
       - url: http://loki.observability.svc.cluster.local:3100/loki/api/v1/push
 
     scrape_configs:
-      - job_name: kubernetes-pods
+      - job_name: yas-pod-logs
         pipeline_stages:
           - cri: {}
-        kubernetes_sd_configs:
-          - role: pod
-        relabel_configs:
-          - action: keep
-            source_labels:
-              - __meta_kubernetes_namespace
-            regex: (yas|yas-dev|yas-staging|keycloak|argocd|istio-system|observability)
-          - source_labels:
-              - __meta_kubernetes_namespace
-            target_label: namespace
-          - source_labels:
-              - __meta_kubernetes_pod_name
-            target_label: pod
-          - source_labels:
-              - __meta_kubernetes_pod_container_name
-            target_label: container
-          - source_labels:
-              - __meta_kubernetes_pod_label_app_kubernetes_io_name
-            target_label: app
-          - source_labels:
-              - __meta_kubernetes_pod_label_app
-            target_label: legacy_app
-          - replacement: /var/log/pods/*$1/*.log
-            separator: /
-            source_labels:
-              - __meta_kubernetes_pod_uid
-              - __meta_kubernetes_pod_container_name
-            target_label: __path__
+        static_configs:
+          - targets: [localhost]
+            labels:
+              job: podlogs
+              namespace: yas
+              __path__: /var/log/pods/yas_*/*/*.log
+          - targets: [localhost]
+            labels:
+              job: podlogs
+              namespace: yas-dev
+              __path__: /var/log/pods/yas-dev_*/*/*.log
+          - targets: [localhost]
+            labels:
+              job: podlogs
+              namespace: yas-staging
+              __path__: /var/log/pods/yas-staging_*/*/*.log
+          - targets: [localhost]
+            labels:
+              job: podlogs
+              namespace: keycloak
+              __path__: /var/log/pods/keycloak_*/*/*.log
+          - targets: [localhost]
+            labels:
+              job: podlogs
+              namespace: argocd
+              __path__: /var/log/pods/argocd_*/*/*.log
+          - targets: [localhost]
+            labels:
+              job: podlogs
+              namespace: istio-system
+              __path__: /var/log/pods/istio-system_*/*/*.log
+          - targets: [localhost]
+            labels:
+              job: podlogs
+              namespace: observability
+              __path__: /var/log/pods/observability_*/*/*.log
 ---
 apiVersion: apps/v1
 kind: DaemonSet
