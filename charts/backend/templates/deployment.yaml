@@ -57,7 +57,11 @@ spec:
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          {{- if or (eq (toString .Values.image.tag) "main") (eq (toString .Values.image.tag) "latest") }}
+          imagePullPolicy: Always
+          {{- else }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- end }}
           envFrom:
             - secretRef:
                 name: yas-postgresql-credentials-secret
