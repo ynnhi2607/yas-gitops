@@ -28,6 +28,20 @@ podAnnotations:
   prometheus.io/path: /actuator/prometheus
   prometheus.io/port: "8090"
 
+telemetry:
+  openTelemetryJavaAgent:
+    enabled: true
+    image:
+      repository: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java
+      tag: 1.33.5
+      pullPolicy: IfNotPresent
+    exporterEndpoint: http://opentelemetry-collector.observability:4318
+    tracesExporter: otlp
+    metricsExporter: none
+    logsExporter: none
+    propagators: tracecontext,baggage,b3
+    tracesSampler: always_on
+
 podSecurityContext: {}
   # fsGroup: 2000
 

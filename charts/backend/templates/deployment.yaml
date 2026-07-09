@@ -36,8 +36,20 @@ spec:
       hostAliases:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if or .Values.initContainers .Values.extraInitContainers }}
+      {{- if or .Values.telemetry.openTelemetryJavaAgent.enabled .Values.initContainers .Values.extraInitContainers }}
       initContainers:
+        {{- if .Values.telemetry.openTelemetryJavaAgent.enabled }}
+        - name: otel-javaagent
+          image: "{{ .Values.telemetry.openTelemetryJavaAgent.image.repository }}:{{ .Values.telemetry.openTelemetryJavaAgent.image.tag }}"
+          imagePullPolicy: {{ .Values.telemetry.openTelemetryJavaAgent.image.pullPolicy }}
+          command:
+            - cp
+            - /javaagent.jar
+            - /otel-auto-instrumentation/javaagent.jar
+          volumeMounts:
+            - name: otel-auto-instrumentation
+              mountPath: /otel-auto-instrumentation
+        {{- end }}
         {{- if .Values.initContainers }}
         {{- tpl (toYaml .Values.initContainers) . | nindent 8 }}
         {{- end }}
@@ -49,6 +61,10 @@ spec:
         - name: yas-configuration
           configMap:
             name: yas-configuration-configmap
+        {{- if .Values.telemetry.openTelemetryJavaAgent.enabled }}
+        - name: otel-auto-instrumentation
+          emptyDir: {}
+        {{- end }}
         {{- with .Values.extraVolumes}}
           {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -80,12 +96,40 @@ spec:
             - name: SPRING_CONFIG_ADDITIONAL_LOCATION
               value: /opt/yas/config/application.yaml
             {{- end }}
+            {{- if .Values.telemetry.openTelemetryJavaAgent.enabled }}
+            - name: JAVA_TOOL_OPTIONS
+              value: -javaagent:/otel-auto-instrumentation/javaagent.jar
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['app.kubernetes.io/name']
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: {{ .Values.telemetry.openTelemetryJavaAgent.exporterEndpoint | quote }}
+            - name: OTEL_EXPORTER_OTLP_PROTOCOL
+              value: http/protobuf
+            - name: OTEL_TRACES_EXPORTER
+              value: {{ .Values.telemetry.openTelemetryJavaAgent.tracesExporter | quote }}
+            - name: OTEL_METRICS_EXPORTER
+              value: {{ .Values.telemetry.openTelemetryJavaAgent.metricsExporter | quote }}
+            - name: OTEL_LOGS_EXPORTER
+              value: {{ .Values.telemetry.openTelemetryJavaAgent.logsExporter | quote }}
+            - name: OTEL_PROPAGATORS
+              value: {{ .Values.telemetry.openTelemetryJavaAgent.propagators | quote }}
+            - name: OTEL_TRACES_SAMPLER
+              value: {{ .Values.telemetry.openTelemetryJavaAgent.tracesSampler | quote }}
+            - name: OTEL_INSTRUMENTATION_SPRING_DATA_ENABLED
+              value: "false"
+            {{- end }}
             {{- with .Values.extraEnvs }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
           volumeMounts:
             - mountPath: /opt/yas/config
               name: yas-configuration
+            {{- if .Values.telemetry.openTelemetryJavaAgent.enabled }}
+            - mountPath: /otel-auto-instrumentation
+              name: otel-auto-instrumentation
+            {{- end }}
             {{- with .Values.extraVolumeMounts }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
