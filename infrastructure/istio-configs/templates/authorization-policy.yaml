@@ -23,6 +23,42 @@ spec:
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
+  name: allow-storefront-ui-to-storefront-bff
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: storefront-bff
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/{{ .Values.namespace }}/sa/storefront-ui
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-backoffice-ui-to-backoffice-bff
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: backoffice-bff
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/{{ .Values.namespace }}/sa/backoffice-ui
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
   name: allow-health-checks
   namespace: {{ .Values.namespace }}
   labels:
