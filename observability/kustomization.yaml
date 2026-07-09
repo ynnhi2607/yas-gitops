@@ -3,4 +3,7 @@ kind: Kustomization
 resources:
   - loki.yaml
   - promtail.yaml
+  - tempo.yaml
+  - opentelemetry-collector.yaml
   - grafana-datasources.yaml
+  - grafana-dashboards.yaml
