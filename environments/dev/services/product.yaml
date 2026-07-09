@@ -1,4 +1,4 @@
 backend:
   image:
-    repository: ghcr.io/nashtech-garage/yas-product
+    repository: ynnhi2607/yas-product
     tag: latest
