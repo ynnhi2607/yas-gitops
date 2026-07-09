@@ -7,7 +7,7 @@ backend:
   nameOverride: media
   fullnameOverride: media
   hostAliases:
-    - ip: 10.43.199.254
+    - ip: 10.43.115.244
       hostnames:
         - identity.yas.local.com
   databaseName: media
