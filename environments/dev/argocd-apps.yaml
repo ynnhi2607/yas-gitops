@@ -19,7 +19,13 @@ spec:
             wave: "1"
           - service: inventory
             wave: "1"
+          - service: location
+            wave: "1"
           - service: tax
+            wave: "1"
+          - service: payment
+            wave: "1"
+          - service: payment-paypal
             wave: "1"
           - service: media
             wave: "1"

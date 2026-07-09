@@ -5,3 +5,6 @@ backend:
   ingress:
     enabled: true
     host: backoffice-staging.yas.local.com
+  service:
+    type: NodePort
+    nodePort: 30183

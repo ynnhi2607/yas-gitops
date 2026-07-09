@@ -3,3 +3,6 @@ ui:
     repository: ynnhi2607/yas-storefront
     tag: latest
     pullPolicy: Always
+  service:
+    type: NodePort
+    nodePort: 30180

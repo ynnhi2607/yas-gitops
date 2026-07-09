@@ -23,6 +23,48 @@ spec:
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
+  name: allow-ingress-to-swagger-docs
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+{{- range .Values.gateway.principals }}
+              - {{ . }}
+{{- end }}
+      to:
+        - operation:
+            paths:
+              - /product/v3/api-docs
+              - /product/v3/api-docs/*
+              - /cart/v3/api-docs
+              - /cart/v3/api-docs/*
+              - /customer/v3/api-docs
+              - /customer/v3/api-docs/*
+              - /order/v3/api-docs
+              - /order/v3/api-docs/*
+              - /inventory/v3/api-docs
+              - /inventory/v3/api-docs/*
+              - /location/v3/api-docs
+              - /location/v3/api-docs/*
+              - /media/v3/api-docs
+              - /media/v3/api-docs/*
+              - /payment/v3/api-docs
+              - /payment/v3/api-docs/*
+              - /payment-paypal/v3/api-docs
+              - /payment-paypal/v3/api-docs/*
+              - /tax/v3/api-docs
+              - /tax/v3/api-docs/*
+              - /search/v3/api-docs
+              - /search/v3/api-docs/*
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
   name: allow-storefront-ui-to-storefront-bff
   namespace: {{ .Values.namespace }}
   labels:
@@ -229,6 +271,63 @@ spec:
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
+  name: allow-to-location
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: location
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/{{ .Values.namespace }}/sa/storefront-bff
+              - cluster.local/ns/{{ .Values.namespace }}/sa/backoffice-bff
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-to-payment
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: payment
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/{{ .Values.namespace }}/sa/storefront-bff
+              - cluster.local/ns/{{ .Values.namespace }}/sa/backoffice-bff
+              - cluster.local/ns/{{ .Values.namespace }}/sa/order
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-to-payment-paypal
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/part-of: yas-service-mesh
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: payment-paypal
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/{{ .Values.namespace }}/sa/payment
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
   name: allow-to-media
   namespace: {{ .Values.namespace }}
   labels:
@@ -257,6 +356,7 @@ spec:
               - cluster.local/ns/{{ .Values.namespace }}/sa/backoffice-bff
               - cluster.local/ns/{{ .Values.namespace }}/sa/product
               - cluster.local/ns/{{ .Values.namespace }}/sa/cart
+              - cluster.local/ns/{{ .Values.namespace }}/sa/payment
 ---
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy

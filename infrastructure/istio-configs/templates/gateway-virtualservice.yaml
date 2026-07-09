@@ -191,6 +191,116 @@ spec:
         - authority:
             regex: '{{ $apiAuthority }}'
           uri:
+            prefix: /payment-paypal
+      route:
+        - destination:
+            host: payment-paypal.{{ .Values.namespace }}.svc.cluster.local
+            port:
+              number: 80
+      timeout: {{ .Values.timeouts.default }}
+    - match:
+        - authority:
+            regex: '{{ $apiAuthority }}'
+          uri:
+            prefix: /payment
+      route:
+        - destination:
+            host: payment.{{ .Values.namespace }}.svc.cluster.local
+            port:
+              number: 80
+      timeout: {{ .Values.timeouts.default }}
+    - match:
+        - authority:
+            regex: '{{ $apiAuthority }}'
+          uri:
+            prefix: /location
+      route:
+        - destination:
+            host: location.{{ .Values.namespace }}.svc.cluster.local
+            port:
+              number: 80
+      timeout: {{ .Values.timeouts.default }}
+    - match:
+        - authority:
+            regex: '{{ $apiAuthority }}'
+          uri:
+            prefix: /product
+      route:
+        - destination:
+            host: product.{{ .Values.namespace }}.svc.cluster.local
+            port:
+              number: 80
+      timeout: {{ .Values.timeouts.default }}
+    - match:
+        - authority:
+            regex: '{{ $apiAuthority }}'
+          uri:
+            prefix: /cart
+      route:
+        - destination:
+            host: cart.{{ .Values.namespace }}.svc.cluster.local
+            port:
+              number: 80
+      timeout: {{ .Values.timeouts.default }}
+    - match:
+        - authority:
+            regex: '{{ $apiAuthority }}'
+          uri:
+            prefix: /customer
+      route:
+        - destination:
+            host: customer.{{ .Values.namespace }}.svc.cluster.local
+            port:
+              number: 80
+      timeout: {{ .Values.timeouts.default }}
+    - match:
+        - authority:
+            regex: '{{ $apiAuthority }}'
+          uri:
+            prefix: /order
+      route:
+        - destination:
+            host: order.{{ .Values.namespace }}.svc.cluster.local
+            port:
+              number: 80
+      timeout: {{ .Values.timeouts.default }}
+    - match:
+        - authority:
+            regex: '{{ $apiAuthority }}'
+          uri:
+            prefix: /inventory
+      route:
+        - destination:
+            host: inventory.{{ .Values.namespace }}.svc.cluster.local
+            port:
+              number: 80
+      timeout: {{ .Values.timeouts.default }}
+    - match:
+        - authority:
+            regex: '{{ $apiAuthority }}'
+          uri:
+            prefix: /tax
+      route:
+        - destination:
+            host: tax.{{ .Values.namespace }}.svc.cluster.local
+            port:
+              number: 80
+      timeout: {{ .Values.timeouts.default }}
+    - match:
+        - authority:
+            regex: '{{ $apiAuthority }}'
+          uri:
+            prefix: /search
+      route:
+        - destination:
+            host: search.{{ .Values.namespace }}.svc.cluster.local
+            port:
+              number: 80
+      timeout: {{ .Values.timeouts.default }}
+    - match:
+        - authority:
+            regex: '{{ $apiAuthority }}'
+          uri:
             prefix: /swagger-ui
       route:
         - destination:
