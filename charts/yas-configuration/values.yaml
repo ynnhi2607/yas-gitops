@@ -245,6 +245,19 @@ backofficeBffExtraConfig:
                 filters:
                   - RewritePath=/api/(?<segment>.*), /$\{segment}
                   - TokenRelay=
+              - id: location_api
+                uri: http://location
+                predicates:
+                  - Path=/api/location/**
+                filters:
+                  - RewritePath=/api/(?<segment>.*), /$\{segment}
+              - id: payment_api
+                uri: http://payment
+                predicates:
+                  - Path=/api/payment/**
+                filters:
+                  - RewritePath=/api/(?<segment>.*), /$\{segment}
+                  - TokenRelay=
               - id: tax_api
                 uri: http://tax
                 predicates:
@@ -322,6 +335,19 @@ storefrontBffExtraConfig:
                 uri: http://media
                 predicates:
                   - Path=/api/media/**
+                filters:
+                  - RewritePath=/api/(?<segment>.*), /$\{segment}
+                  - TokenRelay=
+              - id: location_api
+                uri: http://location
+                predicates:
+                  - Path=/api/location/**
+                filters:
+                  - RewritePath=/api/(?<segment>.*), /$\{segment}
+              - id: payment_api
+                uri: http://payment
+                predicates:
+                  - Path=/api/payment/**
                 filters:
                   - RewritePath=/api/(?<segment>.*), /$\{segment}
                   - TokenRelay=
