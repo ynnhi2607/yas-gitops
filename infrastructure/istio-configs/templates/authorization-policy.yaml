@@ -307,6 +307,7 @@ spec:
               - cluster.local/ns/{{ .Values.namespace }}/sa/storefront-bff
               - cluster.local/ns/{{ .Values.namespace }}/sa/backoffice-bff
               - cluster.local/ns/{{ .Values.namespace }}/sa/order
+---
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
