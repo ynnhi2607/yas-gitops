@@ -2,3 +2,6 @@ backend:
   image:
     repository: ynnhi2607/yas-product
     tag: latest
+  telemetry:
+    openTelemetryJavaAgent:
+      enabled: false

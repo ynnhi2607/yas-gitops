@@ -3,3 +3,6 @@ backend:
     repository: ynnhi2607/yas-media
     tag: latest
     pullPolicy: Always
+  telemetry:
+    openTelemetryJavaAgent:
+      enabled: false

@@ -8,3 +8,6 @@ backend:
   service:
     type: NodePort
     nodePort: 30082
+  telemetry:
+    openTelemetryJavaAgent:
+      enabled: false

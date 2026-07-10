@@ -4,3 +4,6 @@ backend:
     tag: 602cc5e2
   startupProbe:
     failureThreshold: 180
+  telemetry:
+    openTelemetryJavaAgent:
+      enabled: false
