@@ -1,7 +1,7 @@
 backend:
   image:
-    repository: ghcr.io/nashtech-garage/yas-order
-    tag: latest
+    repository: ynnhi2607/yas-order
+    tag: d374ac3b
   telemetry:
     openTelemetryJavaAgent:
       enabled: false
