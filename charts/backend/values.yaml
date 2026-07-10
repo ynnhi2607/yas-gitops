@@ -30,7 +30,7 @@ podAnnotations:
 
 telemetry:
   openTelemetryJavaAgent:
-    enabled: true
+    enabled: false
     image:
       repository: ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-java
       tag: 1.33.5
