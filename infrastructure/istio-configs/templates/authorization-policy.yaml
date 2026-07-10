@@ -284,6 +284,9 @@ spec:
             principals:
               - cluster.local/ns/{{ .Values.namespace }}/sa/storefront-bff
               - cluster.local/ns/{{ .Values.namespace }}/sa/backoffice-bff
+              - cluster.local/ns/{{ .Values.namespace }}/sa/customer
+              - cluster.local/ns/{{ .Values.namespace }}/sa/inventory
+              - cluster.local/ns/{{ .Values.namespace }}/sa/tax
 ---
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
