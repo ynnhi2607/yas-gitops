@@ -68,15 +68,14 @@ pipeline {
             return
           }
 
-          withCredentials([usernamePassword(
+          withCredentials([string(
             credentialsId: env.GITOPS_TOKEN_CREDENTIALS_ID,
-            usernameVariable: 'GIT_USERNAME',
-            passwordVariable: 'GIT_PASSWORD'
+            variable: 'GITHUB_TOKEN'
           )]) {
             sh '''
               git config user.email "jenkins@local"
               git config user.name "jenkins-bot"
-              git remote set-url origin "https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ynnhi2607/yas-gitops.git"
+              git remote set-url origin "https://ynnhi2607:${GITHUB_TOKEN}@github.com/ynnhi2607/yas-gitops.git"
               git add "environments/${TARGET_ENV}/services"
               git commit -m "developer_build: update ${TARGET_ENV} image tags [build #${BUILD_NUMBER}]"
               git push origin HEAD:main
