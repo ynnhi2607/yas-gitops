@@ -29,21 +29,22 @@ backend:
     - /opt/yas/media/media-application.yaml
   extraInitContainers:
     - name: seed-sample-images
-      image: ynnhi2607/yas-media:latest
+      image: ynnhi2607/yas-sampledata:latest
       command:
         - sh
         - -c
         - |
           set -eu
-          if [ -d /images ] && [ ! -f /images-mount/sample/product/ip15/iphone15_thumbnail.jpg ]; then
-            echo "Copying baseline media images..."
-            cp -a /images/. /images-mount/
+          if [ ! -f /images/.sample-images-seeded ]; then
+            echo "Copying sample images..."
+            cp -a /sample-images/. /images/
+            touch /images/.sample-images-seeded
           else
-            echo "Baseline images already exist or /images is missing."
+            echo "Sample images already seeded."
           fi
       volumeMounts:
         - name: media-images
-          mountPath: /images-mount
+          mountPath: /images
   extraObjects:
     - apiVersion: v1
       kind: PersistentVolumeClaim
