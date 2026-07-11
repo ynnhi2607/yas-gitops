@@ -1,14 +1,18 @@
+{{- $publicServiceHosts := without .Values.services.public "swagger-ui" }}
+{{- $serviceHosts := concat .Values.services.backends $publicServiceHosts (list .Values.services.swaggerService) | uniq }}
+{{- range $service := $serviceHosts }}
 apiVersion: networking.istio.io/v1
 kind: DestinationRule
 metadata:
-  name: default-istio-mutual
-  namespace: {{ .Values.namespace }}
+  name: mtls-{{ $service }}
+  namespace: {{ $.Values.namespace }}
 spec:
-  host: "*.{{ .Values.namespace }}.svc.cluster.local"
+  host: "{{ $service }}.{{ $.Values.namespace }}.svc.cluster.local"
   trafficPolicy:
     tls:
       mode: ISTIO_MUTUAL
 ---
+{{- end }}
 apiVersion: networking.istio.io/v1
 kind: DestinationRule
 metadata:
