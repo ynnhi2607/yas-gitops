@@ -6,5 +6,6 @@ resources:
   - tempo.yaml
   - opentelemetry-collector.yaml
   - grafana-instance.yaml
+  - grafana-operator-datasources.yaml
   - grafana-datasources.yaml
   - grafana-dashboards.yaml
