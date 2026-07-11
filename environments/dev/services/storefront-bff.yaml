@@ -1,6 +1,6 @@
 backend:
   image:
-    repository: ghcr.io/nashtech-garage/yas-storefront-bff
+    repository: ynnhi2607/yas-storefront-bff
     tag: latest
   ingress:
     enabled: true

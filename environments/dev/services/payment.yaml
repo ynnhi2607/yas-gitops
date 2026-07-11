@@ -1,7 +1,7 @@
 backend:
   image:
     repository: ynnhi2607/yas-payment
-    tag: 602cc5e2
+    tag: latest
   startupProbe:
     failureThreshold: 180
   telemetry:

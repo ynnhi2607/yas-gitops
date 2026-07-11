@@ -1,7 +1,7 @@
 backend:
   image:
     repository: ynnhi2607/yas-order
-    tag: a90ce7e5
+    tag: latest
   telemetry:
     openTelemetryJavaAgent:
       enabled: false

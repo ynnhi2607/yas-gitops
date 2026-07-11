@@ -1,7 +1,7 @@
 backend:
   image:
-    repository: ghcr.io/nashtech-garage/yas-tax
-    tag: latest
+    repository: ynnhi2607/yas-tax
+    tag: 328b0505
   telemetry:
     openTelemetryJavaAgent:
       enabled: false
