@@ -1,4 +1,5 @@
 ingress:
+  enabled: false
   host: api-staging.yas.local.com
 service:
   type: NodePort
