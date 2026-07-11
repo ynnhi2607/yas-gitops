@@ -1,0 +1,97 @@
+pipeline {
+  agent any
+
+  options {
+    timestamps()
+    disableConcurrentBuilds()
+    timeout(time: 10, unit: 'MINUTES')
+  }
+
+  environment {
+    GITOPS_TOKEN_CREDENTIALS_ID = 'github-token'
+    DOCKERHUB_NAMESPACE = 'ynnhi2607'
+    MAIN_TAG = 'latest'
+  }
+
+  parameters {
+    choice(name: 'TARGET_ENV', choices: ['dev', 'staging'], description: 'GitOps environment to reset')
+    choice(name: 'CLEANUP_MODE', choices: ['RESET_TO_MAIN', 'SELECTIVE'], description: 'Reset all services or selected services only')
+
+    booleanParam(name: 'RESET_PRODUCT', defaultValue: false, description: 'Reset product-service to main')
+    booleanParam(name: 'RESET_CART', defaultValue: false, description: 'Reset cart-service to main')
+    booleanParam(name: 'RESET_ORDER', defaultValue: false, description: 'Reset order-service to main')
+    booleanParam(name: 'RESET_CUSTOMER', defaultValue: false, description: 'Reset customer-service to main')
+    booleanParam(name: 'RESET_INVENTORY', defaultValue: false, description: 'Reset inventory-service to main')
+    booleanParam(name: 'RESET_LOCATION', defaultValue: false, description: 'Reset location-service to main')
+    booleanParam(name: 'RESET_TAX', defaultValue: false, description: 'Reset tax-service to main')
+    booleanParam(name: 'RESET_PAYMENT', defaultValue: false, description: 'Reset payment-service to main')
+    booleanParam(name: 'RESET_MEDIA', defaultValue: false, description: 'Reset media-service to main')
+    booleanParam(name: 'RESET_SEARCH', defaultValue: false, description: 'Reset search-service to main')
+    booleanParam(name: 'RESET_STOREFRONT_BFF', defaultValue: false, description: 'Reset storefront-bff to main')
+    booleanParam(name: 'RESET_STOREFRONT_UI', defaultValue: false, description: 'Reset storefront-ui to main')
+    booleanParam(name: 'RESET_BACKOFFICE_BFF', defaultValue: false, description: 'Reset backoffice-bff to main')
+    booleanParam(name: 'RESET_BACKOFFICE_UI', defaultValue: false, description: 'Reset backoffice-ui to main')
+    booleanParam(name: 'RESET_SAMPLEDATA', defaultValue: false, description: 'Reset sampledata to main')
+
+    booleanParam(name: 'DRY_RUN', defaultValue: true, description: 'Show diff without pushing GitOps commit')
+    booleanParam(name: 'CONFIRM', defaultValue: false, description: 'Required when DRY_RUN=false')
+  }
+
+  stages {
+    stage('Validate') {
+      steps {
+        script {
+          if (!params.DRY_RUN && !params.CONFIRM) {
+            error('CONFIRM=true is required when DRY_RUN=false.')
+          }
+        }
+      }
+    }
+
+    stage('Build cleanup plan') {
+      steps {
+        sh 'bash jenkins/scripts/build-cleanup-plan.sh cleanup-plan.tsv'
+      }
+    }
+
+    stage('Reset image tags') {
+      steps {
+        sh 'bash jenkins/scripts/update-values.sh cleanup-plan.tsv'
+      }
+    }
+
+    stage('Commit and push') {
+      when {
+        expression { !params.DRY_RUN && params.CONFIRM }
+      }
+      steps {
+        script {
+          def changed = sh(
+            script: "git status --porcelain environments/${params.TARGET_ENV}/services",
+            returnStdout: true
+          ).trim()
+
+          if (!changed) {
+            echo 'Nothing changed. Selected tags are already at latest.'
+            return
+          }
+
+          withCredentials([usernamePassword(
+            credentialsId: env.GITOPS_TOKEN_CREDENTIALS_ID,
+            usernameVariable: 'GIT_USERNAME',
+            passwordVariable: 'GIT_PASSWORD'
+          )]) {
+            sh '''
+              git config user.email "jenkins@local"
+              git config user.name "jenkins-bot"
+              git remote set-url origin "https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/ynnhi2607/yas-gitops.git"
+              git add "environments/${TARGET_ENV}/services"
+              git commit -m "cleanup: reset ${TARGET_ENV} image tags to latest [build #${BUILD_NUMBER}]"
+              git push origin HEAD:main
+            '''
+          }
+        }
+      }
+    }
+  }
+}
