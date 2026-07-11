@@ -5,6 +5,7 @@ resources:
   - promtail.yaml
   - tempo.yaml
   - opentelemetry-collector.yaml
+  - istio-podmonitor.yaml
   - grafana-instance.yaml
   - grafana-operator-datasources.yaml
   - grafana-datasources.yaml
