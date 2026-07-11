@@ -1,7 +1,7 @@
 backend:
   image:
     repository: ynnhi2607/yas-tax
-    tag: 328b0505
+    tag: latest
   telemetry:
     openTelemetryJavaAgent:
       enabled: false
