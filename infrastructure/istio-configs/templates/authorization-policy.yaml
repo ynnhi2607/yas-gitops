@@ -20,46 +20,34 @@ spec:
 {{- end }}
 ---
 {{- end }}
+{{- $swaggerDocsServices := list "product" "cart" "customer" "order" "inventory" "location" "media" "payment" "tax" "search" }}
+{{- range $service := $swaggerDocsServices }}
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-ingress-to-swagger-docs
-  namespace: {{ .Values.namespace }}
+  name: allow-ingress-to-{{ $service }}-api-docs
+  namespace: {{ $.Values.namespace }}
   labels:
     app.kubernetes.io/part-of: yas-service-mesh
 spec:
   action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ $service }}
   rules:
     - from:
         - source:
             principals:
-{{- range .Values.gateway.principals }}
+{{- range $.Values.gateway.principals }}
               - {{ . }}
 {{- end }}
       to:
         - operation:
             paths:
-              - /product/v3/api-docs
-              - /product/v3/api-docs/*
-              - /cart/v3/api-docs
-              - /cart/v3/api-docs/*
-              - /customer/v3/api-docs
-              - /customer/v3/api-docs/*
-              - /order/v3/api-docs
-              - /order/v3/api-docs/*
-              - /inventory/v3/api-docs
-              - /inventory/v3/api-docs/*
-              - /location/v3/api-docs
-              - /location/v3/api-docs/*
-              - /media/v3/api-docs
-              - /media/v3/api-docs/*
-              - /payment/v3/api-docs
-              - /payment/v3/api-docs/*
-              - /tax/v3/api-docs
-              - /tax/v3/api-docs/*
-              - /search/v3/api-docs
-              - /search/v3/api-docs/*
+              - /{{ $service }}/v3/api-docs
+              - /{{ $service }}/v3/api-docs/*
 ---
+{{- end }}
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:

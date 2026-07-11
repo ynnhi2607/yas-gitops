@@ -19,7 +19,6 @@ mtls:
 
 gateway:
   principals:
-    - cluster.local/ns/istio-system/sa/istio-ingressgateway
     - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account
 
 services:
@@ -42,8 +41,6 @@ services:
     - storefront-bff
     - backoffice-bff
     - swagger-ui
-    - yas-dev-swagger-ui
-    - yas-staging-swagger-ui
   swaggerService: yas-dev-swagger-ui
 
 timeouts:
